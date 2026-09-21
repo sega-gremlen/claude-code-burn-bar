@@ -1,0 +1,24 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "claude-code-burn-bar",
+  "description": "A status line that shows how much of your Claude Code budget is left.",
+  "owner": {
+    "name": "sega-gremlen",
+    "url": "https://github.com/sega-gremlen"
+  },
+  "plugins": [
+    {
+      "name": "burn-bar",
+      "displayName": "Burn Bar",
+      "source": "./plugins/burn-bar",
+      "description": "Status line with bars for the 5-hour and weekly rate limits, time until reset, and context window usage.",
+      "version": "1.0.0",
+      "author": {
+        "name": "sega-gremlen"
+      },
+      "homepage": "https://github.com/sega-gremlen/claude-code-burn-bar",
+      "license": "MIT",
+      "keywords": ["statusline", "usage", "rate-limits", "context-window"]
+    }
+  ]
+}
