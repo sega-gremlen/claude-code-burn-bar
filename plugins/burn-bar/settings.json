@@ -1,7 +1,0 @@
-{
-  "statusLine": {
-    "type": "command",
-    "command": "python -X utf8 \"${CLAUDE_PLUGIN_ROOT}/bin/burn_bar.py\"",
-    "padding": 0
-  }
-}

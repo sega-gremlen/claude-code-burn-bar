@@ -7,7 +7,7 @@ limit percentages and how full the context window is.
 
 Output looks like:
 
-    5h ████▍ 89% 1h 57m │ week ██▉   58% 1d 23h │ ctx ▌    12%
+    5h ████▍ 89% 1h 57m │ week ██▉░░ 58% 1d 23h │ ctx ▌░░░░ 12%
 """
 
 import json
@@ -27,10 +27,12 @@ DEFAULT_CONFIG = {
     "show_reset": True,
 }
 
-# Looked up in order; the first file that exists wins.
+# Looked up in order; the first file that exists wins. The second covers a
+# checkout kept anywhere, where a config next to the script is the natural
+# place for it.
 CONFIG_PATHS = (
     Path.home() / ".claude" / "burn-bar.json",
-    Path(__file__).resolve().parent.parent / "config.json",
+    Path(__file__).resolve().parent / "config.json",
 )
 
 DIM = "\033[2m"

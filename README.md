@@ -26,40 +26,74 @@ it, **red** past the stop level. Defaults are 75% / 90% for the rate limits and
 80% / 92% for the context window — the context is allowed to run hotter because
 filling it is harmless, autocompact just kicks in.
 
+It is one Python file with no dependencies. It makes no network calls and reads
+no credentials — Claude Code hands it the session state on stdin, and that is
+all it needs.
+
 ## Install
 
-Run these **inside Claude Code** — start `claude`, then type them at the
-prompt, one after the other:
+Two ways. Both end with the same two things: the script somewhere on disk, and
+a `statusLine` entry pointing at it.
+
+### Let Claude install it
+
+Paste this to Claude Code:
 
 ```
-/plugin marketplace add sega-gremlen/claude-code-burn-bar
-/plugin install burn-bar@claude-code-burn-bar
+Install the Burn Bar status line by following
+https://raw.githubusercontent.com/sega-gremlen/claude-code-burn-bar/main/AGENTS.md
 ```
 
-The first command registers this repo as a plugin marketplace; the second
-installs the plugin from it. Then **restart Claude Code** for the status line
-to take over.
+It will fetch the file, download the script, and edit your settings.
 
-Prefer your shell? The same two steps, without the leading slash:
+### Do it yourself
+
+Download the script:
 
 ```bash
-claude plugin marketplace add sega-gremlen/claude-code-burn-bar
-claude plugin install burn-bar@claude-code-burn-bar
+curl -fsSL -o ~/.claude/burn_bar.py \
+  https://raw.githubusercontent.com/sega-gremlen/claude-code-burn-bar/main/burn_bar.py
 ```
 
-Requires **Python 3.10+** on your `PATH` as `python`. No packages to install,
-no network access, no API token — the plugin only reads the session JSON that
-Claude Code hands it on stdin.
+<details>
+<summary>Windows PowerShell</summary>
 
-If your Python is called `python3` (common on macOS and Linux), see
-[Custom Python path](#custom-python-path) below.
+```powershell
+curl.exe -fsSL -o "$env:USERPROFILE\.claude\burn_bar.py" `
+  https://raw.githubusercontent.com/sega-gremlen/claude-code-burn-bar/main/burn_bar.py
+```
+</details>
 
-### Already have a status line?
+Then add this to `~/.claude/settings.json`, keeping whatever else is already in
+the file:
 
-Yours wins. A `statusLine` in your own `~/.claude/settings.json` takes
-precedence over the one a plugin provides, so the plugin will install cleanly
-and then appear to do nothing. Remove that block from your settings to let the
-plugin draw the line.
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "python -X utf8 ~/.claude/burn_bar.py",
+    "padding": 0
+  }
+}
+```
+
+The line appears as soon as you save — no restart needed.
+
+Requires **Python 3.10+**. If yours is called `python3` rather than `python`,
+use that in the command.
+
+### Windows note
+
+Write the path with **forward slashes**. Claude Code runs the status line
+through Git Bash, which treats backslashes as escape characters, and the
+command fails silently. `~` works and expands to your home directory.
+
+### Why not a plugin?
+
+Claude Code plugins cannot ship a main status line — a plugin's `settings.json`
+only supports `agent` and `subagentStatusLine`, and a `statusLine` key there is
+silently ignored. So the status line has to be configured in your own settings,
+whatever installs the script.
 
 ## Configuration
 
@@ -96,31 +130,24 @@ request.** Claude Code only sends `rate_limits` once it has them, so on a fresh
 session the line may briefly show just `ctx`, or a single `…` before any data
 arrives. That is expected, not a failure.
 
-**To turn it off**, run `/plugin disable burn-bar` — or put your own
-`statusLine` back in `~/.claude/settings.json`, which overrides the plugin's.
+**To turn it off**, remove the `statusLine` block from your settings.
 
 **Terminal requirements:** a UTF-8 capable terminal with a font that has block
-characters (`█ ▏▎▍▌▋▊▉`) and the box-drawing `│`. Any modern terminal qualifies.
-On Windows the script forces UTF-8 output itself.
+characters (`█ ▏▎▍▌▋▊▉ ░`) and the box-drawing `│`. Any modern terminal
+qualifies. On Windows the script forces UTF-8 output itself.
 
-### Custom Python path
+### If the line does not appear
 
-The plugin invokes `python`. If that name does not exist on your system, or you
-want a specific interpreter, override the status line in your own
-`~/.claude/settings.json` — user settings take precedence:
+Run the script by hand with a sample payload — it should print one line:
 
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "python3 \"$HOME/.claude/plugins/marketplaces/claude-code-burn-bar/plugins/burn-bar/bin/burn_bar.py\"",
-    "padding": 0
-  }
-}
+```bash
+echo '{"rate_limits":{"five_hour":{"used_percentage":50,"resets_at":9999999999}},"context_window":{"used_percentage":20}}' | python -X utf8 ~/.claude/burn_bar.py
 ```
 
-Adjust the path if your plugin install directory differs — `/plugin` shows
-where a plugin is installed.
+If that works but the status line stays blank, start Claude Code with
+`claude --debug`, which logs the exit code and stderr of the first status line
+run. Also check that you accepted the workspace trust prompt — status lines
+execute a command, so they stay off in an untrusted folder.
 
 ## License
 
