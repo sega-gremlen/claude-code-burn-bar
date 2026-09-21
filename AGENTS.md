@@ -35,6 +35,16 @@ claude plugin marketplace add sega-gremlen/claude-code-burn-bar
 claude plugin install burn-bar@claude-code-burn-bar
 ```
 
+Tell the user to **restart Claude Code** afterwards for the status line to
+appear.
+
+### If the user already has a status line
+
+A `statusLine` in the user's own `~/.claude/settings.json` takes precedence
+over the plugin's. The install will succeed and appear to do nothing. Check
+for that block before concluding the plugin is broken, and offer to remove it —
+removing only the `statusLine` key, leaving the rest of their settings intact.
+
 ### Prerequisite to check first
 
 Python 3.10+ must be callable as `python`. Verify with `python --version`.

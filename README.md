@@ -28,9 +28,23 @@ filling it is harmless, autocompact just kicks in.
 
 ## Install
 
+Run these **inside Claude Code** — start `claude`, then type them at the
+prompt, one after the other:
+
 ```
 /plugin marketplace add sega-gremlen/claude-code-burn-bar
 /plugin install burn-bar@claude-code-burn-bar
+```
+
+The first command registers this repo as a plugin marketplace; the second
+installs the plugin from it. Then **restart Claude Code** for the status line
+to take over.
+
+Prefer your shell? The same two steps, without the leading slash:
+
+```bash
+claude plugin marketplace add sega-gremlen/claude-code-burn-bar
+claude plugin install burn-bar@claude-code-burn-bar
 ```
 
 Requires **Python 3.10+** on your `PATH` as `python`. No packages to install,
@@ -39,6 +53,13 @@ Claude Code hands it on stdin.
 
 If your Python is called `python3` (common on macOS and Linux), see
 [Custom Python path](#custom-python-path) below.
+
+### Already have a status line?
+
+Yours wins. A `statusLine` in your own `~/.claude/settings.json` takes
+precedence over the one a plugin provides, so the plugin will install cleanly
+and then appear to do nothing. Remove that block from your settings to let the
+plugin draw the line.
 
 ## Configuration
 
@@ -75,10 +96,8 @@ request.** Claude Code only sends `rate_limits` once it has them, so on a fresh
 session the line may briefly show just `ctx`, or a single `…` before any data
 arrives. That is expected, not a failure.
 
-**It replaces your existing status line.** A plugin's status line takes effect
-when the plugin is enabled. If you already have a `statusLine` in
-`~/.claude/settings.json` and want it back, disable the plugin with
-`/plugin disable burn-bar` (or remove your own setting to let the plugin win).
+**To turn it off**, run `/plugin disable burn-bar` — or put your own
+`statusLine` back in `~/.claude/settings.json`, which overrides the plugin's.
 
 **Terminal requirements:** a UTF-8 capable terminal with a font that has block
 characters (`█ ▏▎▍▌▋▊▉`) and the box-drawing `│`. Any modern terminal qualifies.
